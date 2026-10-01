@@ -98,3 +98,79 @@ def generate_puzzle(difficulty):
         puzzle[r][c] = 0
 
     return puzzle, solution
+
+class SudokuApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Sudoku")
+        self.root.resizable(False, False)
+
+        # Each cell is 55x55 pixels, 9 cells = 495px total
+        self.cell_size = 55
+        self.board_size = self.cell_size * 9
+
+        # The three boards we track
+        self.current = [[0] * 9 for _ in range(9)]   # What player sees now
+        self.original = [[0] * 9 for _ in range(9)]   # Starting clues (locked)
+        self.solution = [[0] * 9 for _ in range(9)]   # The correct answer
+
+        # Which cell is currently selected
+        self.selected = (0, 0)
+
+        # Build the UI
+        self.create_widgets()
+
+        # Start first game
+        self.new_game()
+
+    def create_widgets(self):
+        # --- Top bar with buttons ---
+        top = tk.Frame(self.root, padx=10, pady=10)
+        top.pack()
+
+        tk.Label(top, text="Difficulty:").pack(side=tk.LEFT, padx=(0, 5))
+
+        self.diff_var = tk.StringVar(value="Medium")
+        tk.OptionMenu(top, self.diff_var, "Easy", "Medium", "Hard").pack(
+            side=tk.LEFT, padx=5
+        )
+
+        tk.Button(top, text="New Game", command=self.new_game).pack(
+            side=tk.LEFT, padx=5
+        )
+        tk.Button(top, text="Check", command=self.check).pack(
+            side=tk.LEFT, padx=5
+        )
+        tk.Button(top, text="Restart", command=self.restart).pack(
+            side=tk.LEFT, padx=5
+        )
+        tk.Button(top, text="Solve", command=self.solve_it).pack(
+            side=tk.LEFT, padx=5
+        )
+
+        # --- The game board canvas ---
+        self.canvas = tk.Canvas(
+            self.root,
+            width=self.board_size,
+            height=self.board_size,
+            bg="white",
+            cursor="hand2",
+        )
+        self.canvas.pack(padx=15, pady=5)
+        self.canvas.bind("<Button-1>", self.on_click)
+
+        # --- Keyboard bindings ---
+        self.root.bind("<Key>", self.on_key)
+        self.root.bind("<Up>", lambda e: self.move(-1, 0))
+        self.root.bind("<Down>", lambda e: self.move(1, 0))
+        self.root.bind("<Left>", lambda e: self.move(0, -1))
+        self.root.bind("<Right>", lambda e: self.move(0, 1))
+
+        # --- Bottom status message ---
+        self.status = tk.Label(
+            self.root,
+            text="Click a cell and type 1-9 to play!",
+            font=("Arial", 11),
+            pady=10,
+        )
+        self.status.pack()
