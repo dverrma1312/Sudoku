@@ -260,5 +260,51 @@ class SudokuApp:
             self.status.config(text=f"Cleared row {row+1}, col {col+1}.")
             self.draw_board()
             
+            def new_game(self):
+            """Generate a brand-new unique puzzle."""
+        difficulty = self.diff_var.get()
+        puzzle, solution = generate_puzzle(difficulty)
+
+        self.current = [row[:] for row in puzzle]
+        self.original = [row[:] for row in puzzle]
+        self.solution = [row[:] for row in solution]
+
+        self.selected = (0, 0)
+        self.status.config(text=f"New {difficulty} game! Good luck!")
+        self.draw_board()
+
+    def restart(self):
+        """Reset board back to starting clues."""
+        self.current = [row[:] for row in self.original]
+        self.status.config(text="Board reset to starting clues.")
+        self.draw_board()
+
+    def check(self):
+        """Check if the player's entries are correct."""
+        empty_count = 0
+        mistake_count = 0
+
+        for r in range(9):
+            for c in range(9):
+                val = self.current[r][c]
+                if val == 0:
+                    empty_count += 1
+                elif val != self.solution[r][c]:
+                    mistake_count += 1
+
+        if empty_count > 0 and mistake_count == 0:
+            self.status.config(text=f"No mistakes so far! {empty_count} cells remaining.")
+        elif mistake_count > 0:
+            self.status.config(text=f"Found {mistake_count} incorrect cell(s). Keep trying!")
+        else:
+            messagebox.showinfo("Victory!", "🎉 You solved the Sudoku!")
+            self.status.config(text="Solved! Click 'New Game' to play again.")
+
+    def solve_it(self):
+        """Reveal the full solution."""
+        self.current = [row[:] for row in self.solution]
+        self.draw_board()
+        self.status.config(text="Solution revealed.")
+            
             
         
