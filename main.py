@@ -174,3 +174,91 @@ class SudokuApp:
             pady=10,
         )
         self.status.pack()
+        
+    def draw_board(self):
+        """Draws the entire board: highlight, numbers, and grid lines."""
+        self.canvas.delete("all")
+
+        # 1. Highlight the selected cell
+        sr, sc = self.selected
+        self.canvas.create_rectangle(
+            sc * self.cell_size,
+            sr * self.cell_size,
+            (sc + 1) * self.cell_size,
+            (sr + 1) * self.cell_size,
+            fill="#D0E8FF",
+            width=0,
+        )
+
+        # 2. Draw all numbers
+        for row in range(9):
+            for col in range(9):
+                val = self.current[row][col]
+                if val != 0:
+                    x = col * self.cell_size + self.cell_size // 2
+                    y = row * self.cell_size + self.cell_size // 2
+
+                    # Original clues = black bold, player entries = blue
+                    if self.original[row][col] != 0:
+                        color = "black"
+                        font = ("Arial", 18, "bold")
+                    else:
+                        color = "#2563EB"
+                        font = ("Arial", 18)
+
+                    self.canvas.create_text(x, y, text=str(val), font=font, fill=color)
+
+        # 3. Draw grid lines
+        for i in range(10):
+            pos = i * self.cell_size
+
+            if i % 3 == 0:
+                color = "#1F2937"
+                width = 3
+            else:
+                color = "#D1D5DB"
+                width = 1
+
+            # Vertical line
+            self.canvas.create_line(pos, 0, pos, self.board_size, fill=color, width=width)
+            # Horizontal line
+            self.canvas.create_line(0, pos, self.board_size, pos, fill=color, width=width)
+        def on_click(self, event):
+            """Player clicked on the board — select that cell."""
+        col = event.x // self.cell_size
+        row = event.y // self.cell_size
+
+        if 0 <= row < 9 and 0 <= col < 9:
+            self.selected = (row, col)
+            self.draw_board()
+
+    def move(self, dr, dc):
+        """Arrow key pressed — move the selection cursor."""
+        r = max(0, min(8, self.selected[0] + dr))
+        c = max(0, min(8, self.selected[1] + dc))
+        self.selected = (r, c)
+        self.draw_board()
+
+    def on_key(self, event):
+        """Player pressed a key — type a number or erase."""
+        row, col = self.selected
+
+        # Don't allow editing original clues
+        if self.original[row][col] != 0:
+            self.status.config(text="That cell is a starting clue — it's locked!")
+            return
+
+        # Number 1-9 typed
+        if event.char in "123456789":
+            self.current[row][col] = int(event.char)
+            self.status.config(text=f"Placed {event.char} at row {row+1}, col {col+1}.")
+            self.draw_board()
+
+        # Erase key pressed
+        elif event.keysym in ("BackSpace", "Delete") or event.char == "0":
+            self.current[row][col] = 0
+            self.status.config(text=f"Cleared row {row+1}, col {col+1}.")
+            self.draw_board()
+            
+            
+        
