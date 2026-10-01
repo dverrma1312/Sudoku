@@ -26,6 +26,7 @@ def is_valid(board, row, col, num):
 
     return True
 
+
 def solve(board):
     """Solve the board using backtracking. Returns True if solved, False if stuck."""
 
@@ -51,6 +52,7 @@ def solve(board):
 
     # No empty cells left — board is completely solved!
     return True
+
 
 def generate_full_board():
     """Create a complete, valid 9x9 board filled with random numbers."""
@@ -98,6 +100,7 @@ def generate_puzzle(difficulty):
         puzzle[r][c] = 0
 
     return puzzle, solution
+
 
 class SudokuApp:
     def __init__(self, root):
@@ -174,7 +177,7 @@ class SudokuApp:
             pady=10,
         )
         self.status.pack()
-        
+
     def draw_board(self):
         """Draws the entire board: highlight, numbers, and grid lines."""
         self.canvas.delete("all")
@@ -223,8 +226,9 @@ class SudokuApp:
             self.canvas.create_line(pos, 0, pos, self.board_size, fill=color, width=width)
             # Horizontal line
             self.canvas.create_line(0, pos, self.board_size, pos, fill=color, width=width)
-        def on_click(self, event):
-            """Player clicked on the board — select that cell."""
+
+    def on_click(self, event):
+        """Player clicked on the board — select that cell."""
         col = event.x // self.cell_size
         row = event.y // self.cell_size
 
@@ -259,9 +263,9 @@ class SudokuApp:
             self.current[row][col] = 0
             self.status.config(text=f"Cleared row {row+1}, col {col+1}.")
             self.draw_board()
-            
-        def new_game(self):
-            """Generate a brand-new unique puzzle."""
+
+    def new_game(self):
+        """Generate a brand-new unique puzzle."""
         difficulty = self.diff_var.get()
         puzzle, solution = generate_puzzle(difficulty)
 
@@ -305,9 +309,8 @@ class SudokuApp:
         self.current = [row[:] for row in self.solution]
         self.draw_board()
         self.status.config(text="Solution revealed.")
-            
-            
-        
+
+
 if __name__ == "__main__":
     window = tk.Tk()
     app = SudokuApp(window)
