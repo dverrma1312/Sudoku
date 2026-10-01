@@ -260,7 +260,7 @@ class SudokuApp:
             self.status.config(text=f"Cleared row {row+1}, col {col+1}.")
             self.draw_board()
             
-            def new_game(self):
+        def new_game(self):
             """Generate a brand-new unique puzzle."""
         difficulty = self.diff_var.get()
         puzzle, solution = generate_puzzle(difficulty)
@@ -308,3 +308,7 @@ class SudokuApp:
             
             
         
+if __name__ == "__main__":
+    window = tk.Tk()
+    app = SudokuApp(window)
+    window.mainloop()
