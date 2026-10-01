@@ -1,0 +1,3 @@
+# Sudoku Application Dependencies
+# This project uses Python's standard library (tkinter, unittest, dataclasses)
+# No external pip dependencies required for standard Python installations.
