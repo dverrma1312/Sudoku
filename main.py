@@ -51,3 +51,50 @@ def solve(board):
 
     # No empty cells left — board is completely solved!
     return True
+
+def generate_full_board():
+    """Create a complete, valid 9x9 board filled with random numbers."""
+    board = [[0] * 9 for _ in range(9)]
+
+    def fill(board):
+        for row in range(9):
+            for col in range(9):
+                if board[row][col] == 0:
+                    nums = list(range(1, 10))
+                    random.shuffle(nums)
+
+                    for num in nums:
+                        if is_valid(board, row, col, num):
+                            board[row][col] = num
+                            if fill(board):
+                                return True
+                            board[row][col] = 0
+
+                    return False
+        return True
+
+    fill(board)
+    return board
+
+
+def generate_puzzle(difficulty):
+    """Generate a puzzle with a unique solution. Returns (puzzle, solution)."""
+
+    # 1. Build a fully solved board
+    solution = generate_full_board()
+
+    # 2. Copy it and start removing numbers
+    puzzle = [row[:] for row in solution]
+
+    # How many cells to remove based on difficulty
+    remove_count = {"Easy": 35, "Medium": 45, "Hard": 52}
+    to_remove = remove_count.get(difficulty, 45)
+
+    # 3. Pick random cells and blank them out
+    cells = [(r, c) for r in range(9) for c in range(9)]
+    random.shuffle(cells)
+
+    for r, c in cells[:to_remove]:
+        puzzle[r][c] = 0
+
+    return puzzle, solution
