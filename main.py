@@ -25,3 +25,29 @@ def is_valid(board, row, col, num):
                 return False
 
     return True
+
+def solve(board):
+    """Solve the board using backtracking. Returns True if solved, False if stuck."""
+
+    # Scan every cell to find an empty one
+    for row in range(9):
+        for col in range(9):
+            if board[row][col] == 0:
+
+                # Try placing numbers 1 through 9
+                for num in range(1, 10):
+                    if is_valid(board, row, col, num):
+                        board[row][col] = num
+
+                        # Recurse: try to solve the rest of the board
+                        if solve(board):
+                            return True
+
+                        # Dead end — undo this move and try next number
+                        board[row][col] = 0
+
+                # None of 1-9 worked here, so backtrack
+                return False
+
+    # No empty cells left — board is completely solved!
+    return True
